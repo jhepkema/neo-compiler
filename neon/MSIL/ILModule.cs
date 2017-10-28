@@ -112,15 +112,28 @@ namespace Neo.Compiler.MSIL
                         }
                     }
                     var eventtype = field.FieldType as Mono.Cecil.TypeDefinition;
-                    if (eventtype == null) eventtype = field.FieldType.Resolve();
-                    foreach (var m in eventtype.Methods)
+                    if (eventtype == null)
                     {
-                        if (m.Name == "Invoke")
+                        try
                         {
-                            this.returntype = m.ReturnType.FullName;
-                            foreach (var src in m.Parameters)
+                            eventtype = field.FieldType.Resolve();
+                        }
+                        catch
+                        {
+                            throw new Exception("这个event type不能解析:"+field.FieldType.FullName+".这很可能是System.Action<xxx>,这需要从mscorlib.dll中读取信息，把他copy过来，或者自己定义delegate");
+                        }
+                    }
+                    if (eventtype != null)
+                    {
+                        foreach (var m in eventtype.Methods)
+                        {
+                            if (m.Name == "Invoke")
                             {
-                                this.paramtypes.Add(new AntsParam(src.Name, src.ParameterType.FullName));
+                                this.returntype = m.ReturnType.FullName;
+                                foreach (var src in m.Parameters)
+                                {
+                                    this.paramtypes.Add(new AntsParam(src.Name, src.ParameterType.FullName));
+                                }
                             }
                         }
                     }
