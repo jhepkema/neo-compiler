@@ -608,11 +608,11 @@ namespace Neo.Compiler.JVM
                     break;
                 case javaloader.NormalizedByteCode.__ifnonnull:
                     {
-                        _ConvertPush(0, src, to);//和0比较
-                        _Convert1by1(VM.OpCode.NUMNOTEQUAL, null, to);
-                        var code = _Convert1by1(VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                        code.needfix = true;
-                        code.srcaddr = src.addr + src.arg1;
+                        //实际上ifnonnull 有可能是kotlin自动插入的代码，他有个套路
+                        //ifnonnull 跳过 一个throw，isnon 就 throw
+                        //Neo.VM实际上没有null这个类型，要识别出这个套路，编译出更合理的代码
+                        skipcount = _ConvertIfNonNull(method, src, to);
+ 
                     }
                     break;
                 //    //Stack

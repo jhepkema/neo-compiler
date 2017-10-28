@@ -556,6 +556,40 @@ namespace Neo.Compiler.JVM
             }
             return 0;
         }
+        private int _ConvertIfNonNull(JavaMethod method, OpCode src, AntsMethod to)
+        {
+            int nm = method.GetLastCodeAddr(src.addr);//上一指令
+            int n = method.GetNextCodeAddr(src.addr);
+            int n2 = method.GetNextCodeAddr(n);
+            var codenext = method.body_Codes[n];
+
+            if (nm >= 0 && n >= 0 && n2 >= 0
+                && method.body_Codes[nm].code == javaloader.NormalizedByteCode.__dup //上一条是dup指令
+                && src.arg1 == n2 - src.addr //刚好跳过throw 指令
+                && codenext.code == javaloader.NormalizedByteCode.__invokestatic
+                )
+            {
+                var cc = method.DeclaringType.classfile.constantpool;
+                var c = cc[codenext.arg1] as javaloader.ClassFile.ConstantPoolItemMethodref;
+                var name = c.Class + "::" + c.Name;
+                if (name == "kotlin.jvm.internal.Intrinsics::throwNpe")
+                {//识别到套路
+                    var _code = to.body_Codes.Last().Value;
+                    //移除上一条指令
+                    to.body_Codes.Remove(_code.addr);
+                    this.addr = _code.addr;
+
+                    return 1;
+                }
+            }
+            var codenextnext = method.body_Codes[n2];
+            _ConvertPush(0, src, to);//和0比较
+            _Convert1by1(VM.OpCode.NUMNOTEQUAL, null, to);
+            var code = _Convert1by1(VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+            code.needfix = true;
+            code.srcaddr = src.addr + src.arg1;
+            return 0;
+        }
         private int _ConvertStringBuilder(string callname, OpCode src, AntsMethod to)
         {
             if (callname == "<init>")

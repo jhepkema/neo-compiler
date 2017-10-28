@@ -320,7 +320,20 @@ namespace Neo.Compiler.JVM
         //        }
         //    }
         //}
-
+        public int GetLastCodeAddr(int srcaddr)
+        {
+            int last = -1;
+            foreach (var key in this.body_Codes.Keys)
+            {
+                if (key == srcaddr)
+                {
+                    
+                    return last;
+                }
+                last = key;
+            }
+            return last;
+        }
         public int GetNextCodeAddr(int srcaddr)
         {
             bool bskip = false;
