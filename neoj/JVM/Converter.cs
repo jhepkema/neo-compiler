@@ -16,8 +16,8 @@ namespace Neo.Compiler.JVM
 
     //        var converter = new ModuleConverter(logger);
     //        //有异常的话在 convert 函数中会直接throw 出来
-    //        var antmodule = converter.Convert(moduleJVMPackage);
-    //        return antmodule.Build();
+    //        var neomodule = converter.Convert(moduleJVMPackage);
+    //        return neomodule.Build();
     //    }
 
     //}
@@ -42,13 +42,13 @@ namespace Neo.Compiler.JVM
 
         ILogger logger;
         JavaModule srcModule;
-        public AntsModule outModule;
-        public Dictionary<JavaMethod, AntsMethod> methodLink = new Dictionary<JavaMethod, AntsMethod>();
-        public AntsModule Convert(JavaModule _in)
+        public NeoModule outModule;
+        public Dictionary<JavaMethod, NeoMethod> methodLink = new Dictionary<JavaMethod, NeoMethod>();
+        public NeoModule Convert(JavaModule _in)
         {
             this.srcModule = _in;
             //logger.Log("beginConvert.");
-            this.outModule = new AntsModule(this.logger);
+            this.outModule = new NEoModule(this.logger);
             foreach (var c in _in.classes.Values)
             {
                 if (c.skip) continue;
@@ -56,7 +56,7 @@ namespace Neo.Compiler.JVM
                 {
                     if (m.Value.skip) continue;
                     if (m.Key[0] == '<') continue;//系統函數不要
-                    AntsMethod nm = new AntsMethod();
+                    NeoMethod nm = new NeoMethod();
                     nm.name = c.classfile.Name + "::" + m.Key;
                     nm.displayName = m.Key;
                     nm.isPublic = m.Value.method.IsPublic;
@@ -176,13 +176,13 @@ namespace Neo.Compiler.JVM
                 }
             }
         }
-        private void ConvertMethod(JavaMethod from, AntsMethod to)
+        private void ConvertMethod(JavaMethod from, NeoMethod to)
         {
             convertType.Clear();
             to.returntype = from.returnType;
             for (var i = 0; i < from.paramTypes.Count; i++)
             {
-                to.paramtypes.Add(new AntsParam("_" + i, from.paramTypes[i]));
+                to.paramtypes.Add(new NeoParam("_" + i, from.paramTypes[i]));
             }
 
 
@@ -222,7 +222,7 @@ namespace Neo.Compiler.JVM
         int addr = 0;
 
 
-        static int getNumber(AntsCode code)
+        static int getNumber(NeoCode code)
         {
             if (code.code <= VM.OpCode.PUSHBYTES75 && code.code >= VM.OpCode.PUSHBYTES1)
                 return (int)new BigInteger(code.bytes);
@@ -255,7 +255,7 @@ namespace Neo.Compiler.JVM
             var n = BitConverter.ToInt32(target, 0);
             return n;
         }
-        private void ConvertAddrInMethod(AntsMethod to)
+        private void ConvertAddrInMethod(NeoMethod to)
         {
             foreach (var c in to.body_Codes.Values)
             {
@@ -271,7 +271,7 @@ namespace Neo.Compiler.JVM
             }
         }
 
-        private int ConvertCode(JavaMethod method, OpCode src, AntsMethod to)
+        private int ConvertCode(JavaMethod method, OpCode src, NeoMethod to)
         {
             int skipcount = 0;
             switch (src.code)

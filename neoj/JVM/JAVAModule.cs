@@ -115,7 +115,7 @@ namespace Neo.Compiler.JVM
         public string returnType;
         public List<string> paramTypes = new List<string>();
         public Dictionary<int, OpCode> body_Codes = new Dictionary<int, OpCode>();
-        public List<AntsParam> body_Variables = new List<AntsParam>();
+        public List<NeoParam> body_Variables = new List<NeoParam>();
 
         public int MaxVariableIndex = 0;
         //public int addLocal_VariablesCount = 0;
@@ -165,7 +165,7 @@ namespace Neo.Compiler.JVM
             //}
 
             {
-                this.body_Variables = new List<AntsParam>();
+                this.body_Variables = new List<NeoParam>();
 
                 //var addLocal_VariablesCount = this.method.MaxLocals - this.paramTypes.Count;
                 //if (addLocal_VariablesCount < local.Count)
@@ -179,11 +179,11 @@ namespace Neo.Compiler.JVM
 
                 for (var i = 0; i < MaxVariableIndex; i++)
                 {
-                    this.body_Variables.Add(new AntsParam("_noname", ""));
+                    this.body_Variables.Add(new NeoParam("_noname", ""));
                 }
                 foreach (var lv in local)
                 {
-                    this.body_Variables[lv.Key - this.paramTypes.Count] = new AntsParam("local", lv.Value);
+                    this.body_Variables[lv.Key - this.paramTypes.Count] = new NeoParam("local", lv.Value);
                 }
             }
             if (this.method.Instructions != null)

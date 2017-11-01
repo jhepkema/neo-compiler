@@ -7,7 +7,7 @@ namespace Neo.Compiler.JVM
 {
     public partial class ModuleConverter
     {
-        private void _ConvertStLoc(JavaMethod method, OpCode src, AntsMethod to, int pos)
+        private void _ConvertStLoc(JavaMethod method, OpCode src, NeoMethod to, int pos)
         {
             //push d
             var c = _Convert1by1(VM.OpCode.DUPFROMALTSTACK, src, to);
@@ -22,7 +22,7 @@ namespace Neo.Compiler.JVM
             _Insert1(VM.OpCode.ROLL, "", to);
             _Insert1(VM.OpCode.SETITEM, "", to);
         }
-        private void _ConvertLdLoc(JavaMethod method, OpCode src, AntsMethod to, int pos)
+        private void _ConvertLdLoc(JavaMethod method, OpCode src, NeoMethod to, int pos)
         {
             if (method.method.IsStatic == false && pos == 0)
             {//忽略非静态函数取this的操作
@@ -41,11 +41,11 @@ namespace Neo.Compiler.JVM
             //pick
             _Convert1by1(VM.OpCode.PICKITEM, null, to);
         }
-        //private void _ConvertLdLocA(OpCode src, AntsMethod to, int pos)
+        //private void _ConvertLdLocA(OpCode src, NeoMethod to, int pos)
         //{
         //    _ConvertPush(pos, src, to);
         //}
-        private void _ConvertLdArg(OpCode src, AntsMethod to, int pos)
+        private void _ConvertLdArg(OpCode src, NeoMethod to, int pos)
         {
             //push d
             var c = _Convert1by1(VM.OpCode.DEPTH, src, to);
@@ -159,7 +159,7 @@ namespace Neo.Compiler.JVM
             callhash = null;
             return false;
         }
-        private int _ConvertCall(JavaMethod method, OpCode src, AntsMethod to)
+        private int _ConvertCall(JavaMethod method, OpCode src, NeoMethod to)
         {
             _Convert1by1(VM.OpCode.NOP, src, to);
             var cc = method.DeclaringType.classfile.constantpool;
@@ -431,7 +431,7 @@ namespace Neo.Compiler.JVM
             return 0;
         }
 
-        private int _ConvertNewArray(JavaMethod method, OpCode src, AntsMethod to)
+        private int _ConvertNewArray(JavaMethod method, OpCode src, NeoMethod to)
         {
             int skipcount = 0;
             if (src.arg1 != 8)
@@ -530,7 +530,7 @@ namespace Neo.Compiler.JVM
 
             return 0;
         }
-        private int _ConvertNew(JavaMethod method, OpCode src, AntsMethod to)
+        private int _ConvertNew(JavaMethod method, OpCode src, NeoMethod to)
         {
             var c = method.DeclaringType.classfile.constantpool[src.arg1] as javaloader.ClassFile.ConstantPoolItemClass;
             if (c.Name == "java.lang.StringBuilder")
@@ -556,7 +556,7 @@ namespace Neo.Compiler.JVM
             }
             return 0;
         }
-        private int _ConvertStringBuilder(string callname, OpCode src, AntsMethod to)
+        private int _ConvertStringBuilder(string callname, OpCode src, NeoMethod to)
         {
             if (callname == "<init>")
             {
@@ -594,7 +594,7 @@ namespace Neo.Compiler.JVM
             }
             return 0;
         }
-        //private int _ConvertNewArr(ILMethod method, OpCode src, AntsMethod to)
+        //private int _ConvertNewArr(ILMethod method, OpCode src, NeoMethod to)
         //{
         //    var code = to.body_Codes.Last().Value;
         //    //we need a number
@@ -641,7 +641,7 @@ namespace Neo.Compiler.JVM
         //    return 0;
 
         //}
-        //private int _ConvertInitObj(OpCode src, AntsMethod to)
+        //private int _ConvertInitObj(OpCode src, NeoMethod to)
         //{
         //    var type = (src.tokenUnknown as Mono.Cecil.TypeReference).Resolve();
         //    _Convert1by1(VM.OpCode.NOP, src, to);//空白
@@ -674,7 +674,7 @@ namespace Neo.Compiler.JVM
         //    _Convert1by1(VM.OpCode.DROP, null, to);
         //    return 0;
         //}
-        //private int _ConvertStfld(OpCode src, AntsMethod to)
+        //private int _ConvertStfld(OpCode src, NeoMethod to)
         //{
         //    var field = (src.tokenUnknown as Mono.Cecil.FieldReference).Resolve();
         //    var type = field.DeclaringType;
@@ -712,7 +712,7 @@ namespace Neo.Compiler.JVM
         //    return 0;
         //}
 
-        //private int _ConvertLdfld(OpCode src, AntsMethod to)
+        //private int _ConvertLdfld(OpCode src, NeoMethod to)
         //{
         //    var field = (src.tokenUnknown as Mono.Cecil.FieldReference).Resolve();
         //    var type = field.DeclaringType;

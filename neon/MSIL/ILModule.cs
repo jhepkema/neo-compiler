@@ -120,7 +120,7 @@ namespace Neo.Compiler.MSIL
                             this.returntype = m.ReturnType.FullName;
                             foreach (var src in m.Parameters)
                             {
-                                this.paramtypes.Add(new AntsParam(src.Name, src.ParameterType.FullName));
+                                this.paramtypes.Add(new NeoParam(src.Name, src.ParameterType.FullName));
                             }
                         }
                     }
@@ -133,7 +133,7 @@ namespace Neo.Compiler.MSIL
         public string name;
         public string displayName;
         public string returntype;
-        public List<AntsParam> paramtypes = new List<AntsParam>();
+        public List<NeoParam> paramtypes = new List<NeoParam>();
         public override string ToString()
         {
             return type;
@@ -154,7 +154,7 @@ namespace Neo.Compiler.MSIL
                     hasParam = true;
                     foreach (var p in method.Parameters)
                     {
-                        this.paramtypes.Add(new AntsParam(p.Name, p.ParameterType.FullName));
+                        this.paramtypes.Add(new NeoParam(p.Name, p.ParameterType.FullName));
                     }
                 }
                 if (method.HasBody)
@@ -164,7 +164,7 @@ namespace Neo.Compiler.MSIL
                     {
                         foreach (var v in bodyNative.Variables)
                         {
-                            this.body_Variables.Add(new AntsParam(v.Name, v.VariableType.FullName));
+                            this.body_Variables.Add(new NeoParam(v.Name, v.VariableType.FullName));
                         }
                     }
                     for (int i = 0; i < bodyNative.Instructions.Count; i++)
@@ -186,10 +186,10 @@ namespace Neo.Compiler.MSIL
         }
 
         public string returntype;
-        public List<AntsParam> paramtypes = new List<AntsParam>();
+        public List<NeoParam> paramtypes = new List<NeoParam>();
         public bool hasParam = false;
         public Mono.Cecil.MethodDefinition method;
-        public List<AntsParam> body_Variables = new List<AntsParam>();
+        public List<NeoParam> body_Variables = new List<NeoParam>();
         public SortedDictionary<int, OpCode> body_Codes = new SortedDictionary<int, OpCode>();
         public string fail = null;
         public int GetNextCodeAddr(int srcaddr)

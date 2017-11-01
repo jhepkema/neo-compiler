@@ -63,7 +63,7 @@ namespace vmtool
 
             return "Unknown:" + _type;
         }
-        public static MyJson.JsonNode_Object Export(AntsModule module,byte[] script)
+        public static MyJson.JsonNode_Object Export(NeoModule module,byte[] script)
         {
             var sha256 = System.Security.Cryptography.SHA256.Create();
             byte[] hash256 = sha256.ComputeHash(script);
